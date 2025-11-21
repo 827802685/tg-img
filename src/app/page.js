@@ -35,6 +35,7 @@ export default function Home() {
   const [isAuthapi, setisAuthapi] = useState(false); // 初始选择第一个选项
   const [Loginuser, setLoginuser] = useState(''); // 初始选择第一个选项
   const [boxType, setBoxtype] = useState("img");
+  const [contentCheck, setContentCheck] = useState(true);
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -373,6 +374,13 @@ export default function Home() {
 
 
   const renderTabContent = () => {
+    if (uploadedImages.length === 0) {
+      return (
+        <div className="w-full min-h-[200px] flex items-center justify-center">
+          <div className="text-gray-500">请先上传文件以查看预览</div>
+        </div>
+      );
+    }
     switch (activeTab) {
       case 'preview':
         return (
@@ -481,11 +489,23 @@ export default function Home() {
     }
   };
 
+  const toggleContentCheck = () => {
+    setContentCheck((prev) => !prev);
+  };
+
 
   return (
     <main className=" overflow-auto h-full flex w-full min-h-screen flex-col items-center justify-between">
       <header className="fixed top-0 h-[50px] left-0 w-full border-b bg-white flex z-50 justify-center items-center">
-        <nav className="flex justify-between items-center w-full max-w-4xl px-4">图床</nav>
+        <nav className="flex justify-between items-center w-full max-w-4xl px-4">
+          <span>文件上传工具</span>
+          <div className="flex items-center">
+            <span className="mr-2 text-sm">内容检测</span>
+            <button onClick={toggleContentCheck} aria-pressed={contentCheck} className={`mr-3 flex h-[26px] w-[50px] items-center rounded-full p-1 duration-200 ${contentCheck ? 'bg-blue-600' : 'bg-[#CCCCCE]'}`}>
+              <span className={`h-[18px] w-[18px] rounded-full bg-white duration-200 ${contentCheck ? 'translate-x-6' : ''}`}></span>
+            </button>
+          </div>
+        </nav>
         {renderButton()}
       </header>
       <div className="mt-[60px] w-9/10 sm:w-9/10 md:w-9/10 lg:w-9/10 xl:w-3/5 2xl:w-2/3">
@@ -495,7 +515,7 @@ export default function Home() {
             <div className="text-gray-800 text-lg">图片或视频上传
             </div>
             <div className="mb-4 text-sm text-gray-500">
-              上传文件最大 5 MB;本站已托管 <span className="text-cyan-600">{Total}</span> 张图片; 你访问本站的IP是：<span className="text-cyan-600">{IP}</span>
+              上传文件格式：20 MB 大小以内任意格式；本站已托管 <span className="text-cyan-600">{Total}</span> 个文件；你访问本站的IP是： <span className="text-cyan-600">{IP}</span>
             </div>
           </div>
           <div className="flex  flex-col sm:flex-col   md:w-auto lg:flex-row xl:flex-row  2xl:flex-row  mx-auto items-center  ">
@@ -575,10 +595,8 @@ export default function Home() {
 
             {selectedFiles.length === 0 && (
               <div className="absolute -z-10 left-0 top-0 w-full h-full flex items-center justify-center">
-
-                <div className="text-gray-500">
-
-                  拖拽文件到这里或将屏幕截图复制并粘贴到此处上传
+                <div className="text-gray-500 text-center px-4">
+                  单击或拖动文件到此区域进行上传；支持单个或批量上传。请确认上传内容符合相关法律法规，禁止上传违法、有害或含有敏感信息的文件。
                 </div>
               </div>
             )}
@@ -632,40 +650,34 @@ export default function Home() {
 
         <ToastContainer />
         <div className="w-full mt-4 min-h-[200px] mb-[60px] ">
-
-          {
-            uploadedImages.length > 0 && (<>
-              <div className="flex flex-wrap gap-3 mb-4 border-b border-gray-300 ">
-                <button
-                  onClick={() => setActiveTab('preview')}
-                  className={`px-4 py-2 ${activeTab === 'preview' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                  Preview
-                </button>
-                <button
-                  onClick={() => setActiveTab('htmlLinks')}
-                  className={`px-4 py-2 ${activeTab === 'htmlLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                  HTML
-                </button>
-                <button
-                  onClick={() => setActiveTab('markdownLinks')}
-                  className={`px-4 py-2 ${activeTab === 'markdownLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                  Markdown
-                </button>
-                <button
-                  onClick={() => setActiveTab('bbcodeLinks')}
-                  className={`px-4 py-2 ${activeTab === 'bbcodeLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                  BBCode
-                </button>
-                <button
-                  onClick={() => setActiveTab('viewLinks')}
-                  className={`px-4 py-2 ${activeTab === 'viewLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
-                  Links
-                </button>
-              </div>
-              {renderTabContent()}
-            </>
-            )
-          }
+          <div className="flex flex-wrap gap-3 mb-4 border-b border-gray-300 ">
+            <button
+              onClick={() => setActiveTab('preview')}
+              className={`px-4 py-2 ${activeTab === 'preview' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              preview
+            </button>
+            <button
+              onClick={() => setActiveTab('viewLinks')}
+              className={`px-4 py-2 ${activeTab === 'viewLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              viewLinks
+            </button>
+            <button
+              onClick={() => setActiveTab('htmlLinks')}
+              className={`px-4 py-2 ${activeTab === 'htmlLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              htmlLinks
+            </button>
+            <button
+              onClick={() => setActiveTab('markdownLinks')}
+              className={`px-4 py-2 ${activeTab === 'markdownLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              markdownLinks
+            </button>
+            <button
+              onClick={() => setActiveTab('bbcodeLinks')}
+              className={`px-4 py-2 ${activeTab === 'bbcodeLinks' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              bbcodeLinks
+            </button>
+          </div>
+          {renderTabContent()}
         </div>
 
       </div>
